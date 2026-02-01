@@ -3,77 +3,155 @@
 <head>
 <style>
     .opdracht-container {
-        font-family: Arial, sans-serif;
+        font-family: 'Segoe UI', Arial, sans-serif;
         line-height: 1.6;
         color: #333;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 20px;
-        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+        border-radius: 12px;
+        padding: 25px;
+        max-width: 850px;
+        margin: 20px auto;
+        background-color: #ffffff;
     }
     .header {
-        color: #003366;
-        border-bottom: 2px solid #003366;
+        color: #1d4e89;
+        border-bottom: 3px solid #f9d423;
         padding-bottom: 10px;
+        text-transform: uppercase;
+    }
+    .stap-box {
+        background-color: #fcfcfc;
+        border-left: 6px solid #1d4e89;
+        margin: 20px 0;
+        padding: 15px 20px;
+        border-radius: 4px;
     }
     .gem-button {
         display: inline-block;
-        background-color: #003366;
+        background-color: #1d4e89;
         color: white !important;
         padding: 12px 24px;
         text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+    textarea {
+        width: 100%;
+        height: 150px;
+        padding: 12px;
+        border: 2px solid #cbd5e0;
+        border-radius: 8px;
+        resize: vertical;
+        box-sizing: border-box;
+        font-family: inherit;
+    }
+    .submit-btn {
+        background-color: #28a745;
+        color: white;
+        border: none;
+        padding: 12px 25px;
         border-radius: 5px;
+        cursor: pointer;
         font-weight: bold;
-        margin: 15px 0;
+        margin-top: 10px;
     }
-    .gem-button:hover {
-        background-color: #0055a4;
+    #resultaat-sectie {
+        display: none;
+        margin-top: 30px;
+        padding: 20px;
+        border: 2px solid #1d4e89;
+        border-radius: 10px;
+        background: #fdfdfd;
     }
-    .stap-box {
-        background-color: #fff;
-        border-left: 5px solid #ffcc00;
-        margin: 15px 0;
+    .prompt-box {
+        background-color: #eef6ff;
+        border: 1px solid #b3d7ff;
         padding: 15px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-top: 15px;
+        border-radius: 6px;
     }
-    .check-list {
-        list-style-type: none;
-        padding-left: 0;
+    .copy-btn {
+        background-color: #1d4e89;
+        color: white;
+        border: none;
+        padding: 5px 10px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 0.8em;
+        float: right;
     }
-    .check-list li::before {
-        content: "✓ ";
-        color: #28a745;
-        font-weight: bold;
+    .feedback-invulveld {
+        width: 100%;
+        height: 100px;
+        margin-top: 10px;
+        background: #fff9db;
+        border: 1px solid #f9d423;
     }
 </style>
 </head>
 <body>
 
 <div class="opdracht-container">
-    <h2 class="header">🚔 Oefening: Aangifte opnemen met Samir</h2>
-    <p>In deze opdracht oefen je het opnemen van een aangifte. Je voert een gesprek met de virtuele aangever <strong>Samir</strong> en schrijft op basis daarvan een proces-verbaal.</p>
-
+    <h2 class="header">🚨 Dossier: De Aangifte van Samir</h2>
+    
     <div class="stap-box">
         <h3>Stap 1: Het gesprek</h3>
-        <p>Start het gesprek met Samir. Gebruik de <strong>7 Gouden W's</strong> om alle feiten te verzamelen. Let op signalementen, tijdstippen en de exacte toedracht.</p>
-        <a href="https://gemini.google.com/gem/ffdf46fb7997" target="_blank" class="gem-button">Start gesprek met Samir</a>
+        <p>Praat met Samir en ontrafel zijn verhaal. Gebruik de 7 Gouden W's.</p>
+        <a href="https://gemini.google.com/gem/ffdf46fb7997" target="_blank" class="gem-button">Start Gesprek met Samir</a>
     </div>
 
     <div class="stap-box">
-        <h3>Stap 2: Schrijven van de aangifte</h3>
-        <p>Verwerk je aantekeningen tot een officiële huntekst. Let op de volgende punten:</p>
-        <ul class="check-list">
-            <li><strong>Objectiviteit:</strong> Geen eigen interpretaties.</li>
-            <li><strong>Chronologie:</strong> Een logische volgorde van gebeurtenissen.</li>
-            <li><strong>Volledigheid:</strong> Alle verzamelde details uit het gesprek.</li>
-        </ul>
+        <h3>Stap 2: Proces-Verbaal Opstellen</h3>
+        <p>Vertaal de straattaal van Samir naar een objectieve huntekst.</p>
+        <textarea id="student-tekst" placeholder="Typ hier de officiële tekst..."></textarea>
+        <button class="submit-btn" onclick="verwerkInlevering()">Opslaan & Analyse Voorbereiden</button>
     </div>
 
-    <div class="stap-box">
-        <h3>Stap 3: Feedback & Inleveren</h3>
-        <p>Upload je tekst hieronder. Je krijgt van de AI direct feedback op je juridische taalgebruik, de structuur en de volledigheid van je verslag.</p>
+    <div id="resultaat-sectie">
+        <h3>📄 Jouw Concept Aangifte</h3>
+        <div id="weergave" style="white-space: pre-wrap; background: #eee; padding: 15px; border-radius: 5px;"></div>
+
+        <div class="prompt-box">
+            <button class="copy-btn" onclick="kopieerPrompt()">Kopieer Prompt</button>
+            <strong>🤖 Stap 3: Analyse via Gemini</strong>
+            <p style="font-size: 0.9em; margin-bottom: 5px;">Kopieer de onderstaande prompt en plak deze in het gesprek met Samir voor directe feedback:</p>
+            <code id="ai-prompt" style="display:block; font-size: 0.85em; color: #444;">
+                "Ik heb een proces-verbaal geschreven op basis van jouw verhaal. Kun je deze tekst controleren op de 7 Gouden W's, juridisch taalgebruik en objectiviteit? Geef feedback in maximaal 100 woorden. Hier is mijn tekst: [MIJN_TEKST]"
+            </code>
+        </div>
+
+        <div class="stap-box" style="border-left-color: #f9d423;">
+            <h4>✍️ Feedback Ruimte</h4>
+            <p style="font-size: 0.85em;">Plak hier de feedback van de AI (max. 100 woorden):</p>
+            <textarea class="feedback-invulveld" placeholder="Plak hier de feedback die je van Gemini krijgt..."></textarea>
+        </div>
     </div>
 </div>
+
+<script>
+    function verwerkInlevering() {
+        const tekst = document.getElementById('student-tekst').value;
+        if(!tekst) return alert("Typ eerst je tekst!");
+
+        // Toon resultaat
+        document.getElementById('weergave').innerText = tekst;
+        document.getElementById('resultaat-sectie').style.display = 'block';
+
+        // Update de prompt met de echte tekst van de student
+        const basisPrompt = "Ik heb een proces-verbaal geschreven op basis van jouw verhaal. Kun je deze tekst controleren op de 7 Gouden W's, juridisch taalgebruik en objectiviteit? Geef feedback in maximaal 100 woorden. Hier is mijn tekst: ";
+        document.getElementById('ai-prompt').innerText = basisPrompt + "\n\n\"" + tekst + "\"";
+        
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    function kopieerPrompt() {
+        const promptTekst = document.getElementById('ai-prompt').innerText;
+        navigator.clipboard.writeText(promptTekst).then(() => {
+            alert("Prompt gekopieerd! Plak hem nu in het Gemini-venster.");
+        });
+    }
+</script>
 
 </body>
 </html>
