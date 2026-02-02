@@ -110,7 +110,7 @@
             border-radius: 4px; 
             border: 1px solid #edf2f7; 
             font-size: 0.95em; 
-            color: #000; /* Zorg voor puur zwart voor PDF export */
+            color: #000;
         }
 
         .btn-group { display: flex; gap: 10px; margin-top: 15px; }
@@ -222,7 +222,7 @@
         database.ref('aangiftes').push({
             naam: naam,
             tekst: tekst,
-            feedback: { v1:false, v2:false, v3:false, v4:false, v5:false, v6:false, v7:false, v8:false, opmerking: "" }
+            feedback: { v1:false, v2:false, v3:false, v4:false, v5:false, v6:false, v7:false, v8:false, v9:false, opmerking: "" }
         });
         document.getElementById('input-tekst').value = '';
     }
@@ -263,6 +263,7 @@
                             <li><input type="checkbox" ${fb.v1?'checked':''} onchange="updateCheck('${key}','v1',this.checked)"> Bestanddeeltekst</li>
                             <li><input type="checkbox" ${fb.v2?'checked':''} onchange="updateCheck('${key}','v2',this.checked)"> Gouden W's</li>
                             <li><input type="checkbox" ${fb.v3?'checked':''} onchange="updateCheck('${key}','v3',this.checked)"> Redenen van wetenschap</li>
+                            <li><input type="checkbox" ${fb.v9?'checked':''} onchange="updateCheck('${key}','v9',this.checked)"> Kaal / veranderlijk decor</li>
                             <li><input type="checkbox" ${fb.v4?'checked':''} onchange="updateCheck('${key}','v4',this.checked)"> Ik-vorm</li>
                             <li><input type="checkbox" ${fb.v5?'checked':''} onchange="updateCheck('${key}','v5',this.checked)"> Onvoltooid verleden tijd</li>
                             <li><input type="checkbox" ${fb.v6?'checked':''} onchange="updateCheck('${key}','v6',this.checked)"> Voor delict</li>
@@ -289,22 +290,16 @@
         const fbPaneel = document.getElementById('fb-' + id);
         const wasVerborgen = fbPaneel.style.display === 'none';
         
-        // Zorg dat het paneel zichtbaar is voor de scan
         fbPaneel.style.display = 'block';
 
         const opt = {
             margin: 10,
             filename: `PV_Aangifte_${naam}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { 
-                scale: 2, 
-                useCORS: true, 
-                letterRendering: true 
-            },
+            html2canvas: { scale: 2, useCORS: true, letterRendering: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        // Kleine vertraging om rendering te garanderen
         setTimeout(() => {
             html2pdf().set(opt).from(element).save().then(() => {
                 if(wasVerborgen) fbPaneel.style.display = 'none';
