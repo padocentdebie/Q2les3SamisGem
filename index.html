@@ -14,6 +14,7 @@
             --border-gray: #cbd5e0;
             --bg-light: #f4f7f9;
             --text-main: #2d3748;
+            --success-green: #28a745;
         }
 
         body {
@@ -76,7 +77,7 @@
         }
 
         .submit-btn {
-            background: #28a745;
+            background: var(--success-green);
             color: white;
             border: none;
             padding: 15px;
@@ -99,7 +100,7 @@
         }
 
         @media (min-width: 768px) {
-            .aangifte-kaart { grid-template-columns: 1fr 300px; }
+            .aangifte-kaart { grid-template-columns: 1fr 320px; }
         }
 
         .tekst-weergave { 
@@ -109,62 +110,96 @@
             border-radius: 4px; 
             border: 1px solid #edf2f7; 
             font-size: 0.95em; 
-            margin-bottom: 10px;
         }
 
-        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+        .btn-group { display: flex; gap: 10px; margin-top: 15px; }
 
         .secondary-btn {
             background: none;
             border: 1px solid var(--primary-blue);
             color: var(--primary-blue);
-            padding: 6px 12px;
+            padding: 8px 14px;
             border-radius: 4px;
             cursor: pointer;
             font-size: 0.8em;
             font-weight: bold;
+            text-transform: uppercase;
         }
 
         .pdf-btn { border-color: #e53e3e; color: #e53e3e; }
 
         .feedback-kolom { background: #fffdf2; border: 1px solid #f9d423; padding: 15px; border-radius: 4px; display: none; }
-        .vinklijst { list-style: none; padding: 0; margin: 0; }
+        
+        .save-fb-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 8px;
+            width: 100%;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+
+        .vinklijst { list-style: none; padding: 0; margin: 0 0 15px 0; }
         .vinklijst li { font-size: 0.85em; margin-bottom: 6px; display: flex; align-items: center; }
         .vinklijst input { margin-right: 10px; }
 
-        .admin-section { margin-top: 80px; text-align: center; border-top: 1px dashed var(--border-gray); padding-top: 20px; }
-        .wis-btn { background: none; color: #a0aec0; border: 1px solid #a0aec0; padding: 5px 10px; cursor: pointer; font-size: 0.75em; }
+        .admin-zone {
+            margin-top: 100px;
+            padding: 30px;
+            border: 2px dashed #cbd5e0;
+            text-align: center;
+            background: #fff;
+        }
+
+        .wis-btn-groot {
+            background: #e53e3e;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1 class="header">Dossier: Aangifte van Samir</h1>
+    <div class="header">
+        <h1>Dossier: Aangifte van Samir</h1>
+    </div>
 
     <div class="stap-box">
         <h3>1. Informatieverzameling</h3>
-        <p>Start het verhoor met Samir om de 7 Gouden W's te inventariseren.</p>
+        <p>Stel de juiste vragen aan Samir om het dossier compleet te maken.</p>
         <center>
             <a href="https://gemini.google.com/gem/e6e35023ee68" target="_blank" class="action-button">Start verhoormodule</a>
         </center>
     </div>
 
     <div class="stap-box">
-        <h3>2. Proces-Verbaal van Aangifte</h3>
+        <h3>2. Proces-Verbaal Inleveren</h3>
         <input type="text" id="student-naam" placeholder="Naam verbalisant">
-        <textarea id="input-tekst" placeholder="Schrijf hier de aangifte (ik-vorm, onvoltooid verleden tijd)..." style="height: 180px;"></textarea>
+        <textarea id="input-tekst" placeholder="Typ hier de officiële aangifte tekst (ik-vorm, OVT)..." style="height: 180px;"></textarea>
         <button class="submit-btn" onclick="verstuurData()">Publiceer voor de klas</button>
     </div>
 
-    <h2 style="color: var(--primary-blue); margin-top: 50px; font-size: 1.2em; border-bottom: 1px solid var(--border-gray); padding-bottom: 10px;">Gepubliceerde Aangiftes</h2>
-    <div id="live-feed">Laden van inzendingen...</div>
+    <h2 style="color: var(--primary-blue); margin-top: 50px; font-size: 1.2em; border-bottom: 1px solid var(--border-gray); padding-bottom: 10px;">Live Feed</h2>
+    <div id="live-feed">Wachten op inzendingen...</div>
 
-    <div class="admin-section">
-        <button class="wis-btn" onclick="wisAlles()">Wis alle teksten uit sessie (Docent)</button>
+    <div class="admin-zone">
+        <h4 style="margin-top:0; color:#718096;">DOCENTENBEHEER</h4>
+        <p style="font-size:0.85em; color:#718096;">Verwijder alle gegevens na afloop van de les om de sessie te resetten.</p>
+        <button class="wis-btn-groot" onclick="wisAlles()">Wis alle teksten uit sessie</button>
     </div>
 </div>
 
 <script>
+    // Firebase configuratie
     const firebaseConfig = {
         apiKey: "AIzaSyBj8dXkl1rEfyx54_MDy_tYd2P7kAeU8VQ",
         authDomain: "q2les3samirgem.firebaseapp.com",
@@ -181,18 +216,23 @@
     function verstuurData() {
         const naam = document.getElementById('student-naam').value;
         const tekst = document.getElementById('input-tekst').value;
-        if(!naam || !tekst) return alert("Vul alles in.");
+        if(!naam || !tekst) return alert("Naam en tekst zijn verplicht.");
 
         database.ref('aangiftes').push({
             naam: naam,
             tekst: tekst,
             feedback: { v1:false, v2:false, v3:false, v4:false, v5:false, v6:false, v7:false, v8:false, opmerking: "" }
         });
-        document.getElementById('student-naam').value = '';
         document.getElementById('input-tekst').value = '';
     }
 
-    function updateFeedback(key, field, value) {
+    function saveFeedback(key) {
+        const opm = document.getElementById('opm-' + key).value;
+        database.ref('aangiftes/' + key + '/feedback').update({ opmerking: opm });
+        alert("Feedback opgeslagen.");
+    }
+
+    function updateCheck(key, field, value) {
         database.ref('aangiftes/' + key + '/feedback').update({ [field]: value });
     }
 
@@ -212,23 +252,25 @@
                         <strong style="color:var(--primary-blue); display:block; margin-bottom:10px;">Verbalisant: ${item.naam}</strong>
                         <div class="tekst-weergave">${item.tekst}</div>
                         <div class="btn-group">
-                            <button class="secondary-btn" onclick="toggleFeedback('${key}')">Feedback tonen</button>
+                            <button class="secondary-btn" onclick="toggleFB('${key}')">Feedbackpaneel</button>
                             <button class="secondary-btn pdf-btn" onclick="downloadPDF('${key}', '${item.naam}')">Download PDF</button>
                         </div>
                     </div>
                     <div class="feedback-kolom" id="fb-${key}">
-                        <strong>CONTROLEPUNTEN</strong>
+                        <strong>CONTROLELIJST</strong>
                         <ul class="vinklijst">
-                            <li><input type="checkbox" ${fb.v1?'checked':''} onchange="updateFeedback('${key}','v1',this.checked)"> Bestanddeeltekst</li>
-                            <li><input type="checkbox" ${fb.v2?'checked':''} onchange="updateFeedback('${key}','v2',this.checked)"> Gouden W's</li>
-                            <li><input type="checkbox" ${fb.v3?'checked':''} onchange="updateFeedback('${key}','v3',this.checked)"> Redenen van wetenschap</li>
-                            <li><input type="checkbox" ${fb.v4?'checked':''} onchange="updateFeedback('${key}','v4',this.checked)"> Ik-vorm</li>
-                            <li><input type="checkbox" ${fb.v5?'checked':''} onchange="updateFeedback('${key}','v5',this.checked)"> Onvoltooid verleden tijd</li>
-                            <li><input type="checkbox" ${fb.v6?'checked':''} onchange="updateFeedback('${key}','v6',this.checked)"> Voor delict</li>
-                            <li><input type="checkbox" ${fb.v7?'checked':''} onchange="updateFeedback('${key}','v7',this.checked)"> Tijdens delict</li>
-                            <li><input type="checkbox" ${fb.v8?'checked':''} onchange="updateFeedback('${key}','v8',this.checked)"> Na delict</li>
+                            <li><input type="checkbox" ${fb.v1?'checked':''} onchange="updateCheck('${key}','v1',this.checked)"> Bestanddeeltekst</li>
+                            <li><input type="checkbox" ${fb.v2?'checked':''} onchange="updateCheck('${key}','v2',this.checked)"> Gouden W's</li>
+                            <li><input type="checkbox" ${fb.v3?'checked':''} onchange="updateCheck('${key}','v3',this.checked)"> Redenen van wetenschap</li>
+                            <li><input type="checkbox" ${fb.v4?'checked':''} onchange="updateCheck('${key}','v4',this.checked)"> Ik-vorm</li>
+                            <li><input type="checkbox" ${fb.v5?'checked':''} onchange="updateCheck('${key}','v5',this.checked)"> Onvoltooid verleden tijd</li>
+                            <li><input type="checkbox" ${fb.v6?'checked':''} onchange="updateCheck('${key}','v6',this.checked)"> Voor delict</li>
+                            <li><input type="checkbox" ${fb.v7?'checked':''} onchange="updateCheck('${key}','v7',this.checked)"> Tijdens delict</li>
+                            <li><input type="checkbox" ${fb.v8?'checked':''} onchange="updateCheck('${key}','v8',this.checked)"> Na delict</li>
                         </ul>
-                        <textarea onchange="updateFeedback('${key}','opmerking',this.value)" placeholder="Opmerkingen...">${fb.opmerking || ""}</textarea>
+                        <strong>OPMERKINGEN</strong>
+                        <textarea id="opm-${key}" style="height: 80px; font-size: 0.85em; margin-top:5px;">${fb.opmerking || ""}</textarea>
+                        <button class="save-fb-btn" onclick="saveFeedback('${key}')">Feedback Opslaan</button>
                     </div>
                 `;
                 feed.appendChild(kaart);
@@ -236,22 +278,20 @@
         }
     });
 
-    function toggleFeedback(id) {
-        const elem = document.getElementById('fb-' + id);
-        elem.style.display = (elem.style.display === 'block') ? 'none' : 'block';
+    function toggleFB(id) {
+        const el = document.getElementById('fb-' + id);
+        el.style.display = (el.style.display === 'block') ? 'none' : 'block';
     }
 
     function downloadPDF(id, naam) {
         const element = document.getElementById('export-' + id);
         const fbPaneel = document.getElementById('fb-' + id);
-        
-        // Zorg dat feedback even zichtbaar is voor de PDF export
         const wasVerborgen = fbPaneel.style.display === 'none';
         fbPaneel.style.display = 'block';
 
         const opt = {
             margin: 10,
-            filename: `Aangifte_Samir_${naam}.pdf`,
+            filename: `PV_Aangifte_${naam}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
             html2canvas: { scale: 2 },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
@@ -263,7 +303,7 @@
     }
 
     function wisAlles() {
-        if(confirm("Weet u zeker dat u ALLE aangiftes van alle studenten wilt wissen? Dit kan niet ongedaan worden gemaakt.")) {
+        if(confirm("Weet u zeker dat u alle ingeleverde teksten wilt verwijderen?")) {
             database.ref('aangiftes').remove();
         }
     }
