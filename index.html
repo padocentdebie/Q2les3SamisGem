@@ -175,7 +175,7 @@
 
     <div class="stap-box">
         <h3>1. Informatieverzameling</h3>
-        <p>Stel de juiste vragen aan Samir om het dossier compleet te maken.</p>
+        <p>Stel de juiste vragen aan Samir om het dossier compleet te maken via de 7 Gouden W's.</p>
         <center>
             <a href="https://gemini.google.com/gem/e6e35023ee68" target="_blank" class="action-button">Start verhoormodule</a>
         </center>
@@ -183,7 +183,8 @@
 
     <div class="stap-box">
         <h3>2. Proces-Verbaal Inleveren</h3>
-        <input type="text" id="student-naam" placeholder="Naam verbalisant">
+        <p style="font-size: 0.85em; color: #718096; margin-bottom: 10px;">Vul alleen je voornaam in in verband met privacy.</p>
+        <input type="text" id="student-naam" placeholder="Je voornaam">
         <textarea id="input-tekst" placeholder="Typ hier de officiële aangifte tekst (ik-vorm, OVT)..." style="height: 180px;"></textarea>
         <button class="submit-btn" onclick="verstuurData()">Publiceer voor de klas</button>
     </div>
@@ -199,7 +200,7 @@
 </div>
 
 <script>
-    // Firebase configuratie
+    // Firebase configuratie uit jouw bron
     const firebaseConfig = {
         apiKey: "AIzaSyBj8dXkl1rEfyx54_MDy_tYd2P7kAeU8VQ",
         authDomain: "q2les3samirgem.firebaseapp.com",
@@ -216,7 +217,7 @@
     function verstuurData() {
         const naam = document.getElementById('student-naam').value;
         const tekst = document.getElementById('input-tekst').value;
-        if(!naam || !tekst) return alert("Naam en tekst zijn verplicht.");
+        if(!naam || !tekst) return alert("Voornaam en tekst zijn verplicht.");
 
         database.ref('aangiftes').push({
             naam: naam,
@@ -229,7 +230,7 @@
     function saveFeedback(key) {
         const opm = document.getElementById('opm-' + key).value;
         database.ref('aangiftes/' + key + '/feedback').update({ opmerking: opm });
-        alert("Feedback opgeslagen.");
+        alert("Feedback succesvol opgeslagen.");
     }
 
     function updateCheck(key, field, value) {
@@ -303,7 +304,7 @@
     }
 
     function wisAlles() {
-        if(confirm("Weet u zeker dat u alle ingeleverde teksten wilt verwijderen?")) {
+        if(confirm("Weet u zeker dat u alle ingeleverde teksten wilt verwijderen? Dit kan niet ongedaan worden gemaakt.")) {
             database.ref('aangiftes').remove();
         }
     }
