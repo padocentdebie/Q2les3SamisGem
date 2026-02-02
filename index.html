@@ -2,9 +2,10 @@
 <html lang="nl">
 <head>
     <meta charset="UTF-8">
-    <title>Proces-Verbaal Aangifte oefening - Dossier Samir</title>
+    <title>Proces-Verbaal Oefening - Dossier Samir</title>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
         :root {
@@ -101,13 +102,38 @@
             .aangifte-kaart { grid-template-columns: 1fr 300px; }
         }
 
-        .verbalisant-label { font-weight: bold; font-size: 0.9em; color: var(--primary-blue); display: block; margin-bottom: 8px; }
-        .tekst-weergave { white-space: pre-wrap; background: #f8fafc; padding: 15px; border-radius: 4px; border: 1px solid #edf2f7; font-size: 0.95em; }
+        .tekst-weergave { 
+            white-space: pre-wrap; 
+            background: #f8fafc; 
+            padding: 15px; 
+            border-radius: 4px; 
+            border: 1px solid #edf2f7; 
+            font-size: 0.95em; 
+            margin-bottom: 10px;
+        }
+
+        .btn-group { display: flex; gap: 10px; margin-top: 10px; }
+
+        .secondary-btn {
+            background: none;
+            border: 1px solid var(--primary-blue);
+            color: var(--primary-blue);
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .pdf-btn { border-color: #e53e3e; color: #e53e3e; }
+
         .feedback-kolom { background: #fffdf2; border: 1px solid #f9d423; padding: 15px; border-radius: 4px; display: none; }
-        .feedback-btn { background: none; border: 1px solid var(--primary-blue); color: var(--primary-blue); padding: 8px 16px; border-radius: 4px; cursor: pointer; margin-top: 15px; font-size: 0.85em; font-weight: bold; }
         .vinklijst { list-style: none; padding: 0; margin: 0; }
         .vinklijst li { font-size: 0.85em; margin-bottom: 6px; display: flex; align-items: center; }
         .vinklijst input { margin-right: 10px; }
+
+        .admin-section { margin-top: 80px; text-align: center; border-top: 1px dashed var(--border-gray); padding-top: 20px; }
+        .wis-btn { background: none; color: #a0aec0; border: 1px solid #a0aec0; padding: 5px 10px; cursor: pointer; font-size: 0.75em; }
     </style>
 </head>
 <body>
@@ -131,7 +157,11 @@
     </div>
 
     <h2 style="color: var(--primary-blue); margin-top: 50px; font-size: 1.2em; border-bottom: 1px solid var(--border-gray); padding-bottom: 10px;">Gepubliceerde Aangiftes</h2>
-    <div id="live-feed">Wachten op inzendingen...</div>
+    <div id="live-feed">Laden van inzendingen...</div>
+
+    <div class="admin-section">
+        <button class="wis-btn" onclick="wisAlles()">Wis alle teksten uit sessie (Docent)</button>
+    </div>
 </div>
 
 <script>
@@ -158,6 +188,7 @@
             tekst: tekst,
             feedback: { v1:false, v2:false, v3:false, v4:false, v5:false, v6:false, v7:false, v8:false, opmerking: "" }
         });
+        document.getElementById('student-naam').value = '';
         document.getElementById('input-tekst').value = '';
     }
 
@@ -175,14 +206,18 @@
                 const fb = item.feedback || {};
                 const kaart = document.createElement('div');
                 kaart.className = 'aangifte-kaart';
+                kaart.id = 'export-' + key;
                 kaart.innerHTML = `
                     <div>
-                        <span class="verbalisant-label">Verbalisant: ${item.naam}</span>
+                        <strong style="color:var(--primary-blue); display:block; margin-bottom:10px;">Verbalisant: ${item.naam}</strong>
                         <div class="tekst-weergave">${item.tekst}</div>
-                        <button class="feedback-btn" onclick="toggleFeedback('${key}')">Feedback tonen/geven</button>
+                        <div class="btn-group">
+                            <button class="secondary-btn" onclick="toggleFeedback('${key}')">Feedback tonen</button>
+                            <button class="secondary-btn pdf-btn" onclick="downloadPDF('${key}', '${item.naam}')">Download PDF</button>
+                        </div>
                     </div>
                     <div class="feedback-kolom" id="fb-${key}">
-                        <strong>AANDACHTSPUNTEN</strong>
+                        <strong>CONTROLEPUNTEN</strong>
                         <ul class="vinklijst">
                             <li><input type="checkbox" ${fb.v1?'checked':''} onchange="updateFeedback('${key}','v1',this.checked)"> Bestanddeeltekst</li>
                             <li><input type="checkbox" ${fb.v2?'checked':''} onchange="updateFeedback('${key}','v2',this.checked)"> Gouden W's</li>
@@ -204,6 +239,33 @@
     function toggleFeedback(id) {
         const elem = document.getElementById('fb-' + id);
         elem.style.display = (elem.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function downloadPDF(id, naam) {
+        const element = document.getElementById('export-' + id);
+        const fbPaneel = document.getElementById('fb-' + id);
+        
+        // Zorg dat feedback even zichtbaar is voor de PDF export
+        const wasVerborgen = fbPaneel.style.display === 'none';
+        fbPaneel.style.display = 'block';
+
+        const opt = {
+            margin: 10,
+            filename: `Aangifte_Samir_${naam}.pdf`,
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 2 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+
+        html2pdf().set(opt).from(element).save().then(() => {
+            if(wasVerborgen) fbPaneel.style.display = 'none';
+        });
+    }
+
+    function wisAlles() {
+        if(confirm("Weet u zeker dat u ALLE aangiftes van alle studenten wilt wissen? Dit kan niet ongedaan worden gemaakt.")) {
+            database.ref('aangiftes').remove();
+        }
     }
 </script>
 
