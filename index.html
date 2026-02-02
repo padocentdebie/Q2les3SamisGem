@@ -1,156 +1,138 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<style>
-    .opdracht-container {
-        font-family: 'Segoe UI', Arial, sans-serif;
-        line-height: 1.6;
-        color: #333;
-        border: 1px solid #ccc;
-        border-radius: 12px;
-        padding: 25px;
-        max-width: 850px;
-        margin: 20px auto;
-        background-color: #ffffff;
-    }
-    .header {
-        color: #1d4e89;
-        border-bottom: 3px solid #f9d423;
-        padding-bottom: 10px;
-        text-transform: uppercase;
-    }
-    .stap-box {
-        background-color: #fcfcfc;
-        border-left: 6px solid #1d4e89;
-        margin: 20px 0;
-        padding: 15px 20px;
-        border-radius: 4px;
-    }
-    .gem-button {
-        display: inline-block;
-        background-color: #1d4e89;
-        color: white !important;
-        padding: 12px 24px;
-        text-decoration: none;
-        border-radius: 8px;
-        font-weight: bold;
-        margin: 10px 0;
-    }
-    textarea {
-        width: 100%;
-        height: 150px;
-        padding: 12px;
-        border: 2px solid #cbd5e0;
-        border-radius: 8px;
-        resize: vertical;
-        box-sizing: border-box;
-        font-family: inherit;
-    }
-    .submit-btn {
-        background-color: #28a745;
-        color: white;
-        border: none;
-        padding: 12px 25px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-weight: bold;
-        margin-top: 10px;
-    }
-    #resultaat-sectie {
-        display: none;
-        margin-top: 30px;
-        padding: 20px;
-        border: 2px solid #1d4e89;
-        border-radius: 10px;
-        background: #fdfdfd;
-    }
-    .prompt-box {
-        background-color: #eef6ff;
-        border: 1px solid #b3d7ff;
-        padding: 15px;
-        margin-top: 15px;
-        border-radius: 6px;
-    }
-    .copy-btn {
-        background-color: #1d4e89;
-        color: white;
-        border: none;
-        padding: 5px 10px;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 0.8em;
-        float: right;
-    }
-    .feedback-invulveld {
-        width: 100%;
-        height: 100px;
-        margin-top: 10px;
-        background: #fff9db;
-        border: 1px solid #f9d423;
-    }
-</style>
+    <meta charset="UTF-8">
+    <title>Dossier Samir - Live Overzicht</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <style>
+        :root {
+            --police-blue: #1d4e89;
+            --police-gold: #f9d423;
+            --bg-light: #f4f7f9;
+        }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg-light); padding: 20px; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .header { color: var(--police-blue); border-bottom: 4px solid var(--police-gold); text-transform: uppercase; text-align: center; }
+        
+        .stap-box { border-left: 6px solid var(--police-blue); background: #fcfcfc; padding: 20px; margin: 20px 0; }
+        .gem-button { display: inline-block; background: var(--police-blue); color: white !important; padding: 12px 24px; text-decoration: none; border-radius: 8px; font-weight: bold; }
+        
+        textarea { width: 100%; padding: 12px; border: 2px solid #cbd5e0; border-radius: 8px; box-sizing: border-box; font-family: inherit; }
+        .submit-btn { background: #28a745; color: white; border: none; padding: 15px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px; }
+        
+        /* Klasoverzicht Kaarten */
+        .aangifte-kaart { border: 1px solid #ddd; margin-top: 20px; padding: 15px; border-radius: 8px; border-top: 5px solid var(--police-blue); display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 768px) { .aangifte-kaart { grid-template-columns: 1fr 300px; } }
+        
+        .feedback-kolom { background: #fff9db; border: 1px solid var(--police-gold); padding: 15px; border-radius: 6px; display: none; }
+        .feedback-btn { background: var(--police-blue); color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; margin-top: 10px; }
+        
+        .vinklijst { list-style: none; padding: 0; font-size: 0.85em; }
+        .vinklijst li { margin-bottom: 5px; display: flex; align-items: center; }
+        .vinklijst input { margin-right: 8px; }
+    </style>
 </head>
 <body>
 
-<div class="opdracht-container">
-    <h2 class="header">🚨 Dossier: De Aangifte van Samir</h2>
-    
-    <div class="stap-box">
-        <h3>Stap 1: Het gesprek</h3>
-        <p>Praat met Samir en ontrafel zijn verhaal. Gebruik de 7 Gouden W's.</p>
-        <a href="https://gemini.google.com/gem/ffdf46fb7997" target="_blank" class="gem-button">Start Gesprek met Samir</a>
-    </div>
+<div class="container">
+    <h1 class="header">🚨 Dossier: De Aangifte van Samir</h1>
 
     <div class="stap-box">
-        <h3>Stap 2: Proces-Verbaal Opstellen</h3>
-        <p>Vertaal de straattaal van Samir naar een objectieve huntekst.</p>
-        <textarea id="student-tekst" placeholder="Typ hier de officiële tekst..."></textarea>
-        <button class="submit-btn" onclick="verwerkInlevering()">Opslaan & Analyse Voorbereiden</button>
+        <h3>Stap 1: Verhoor Samir</h3>
+        <center><a href="https://gemini.google.com/gem/ffdf46fb7997" target="_blank" class="gem-button">START AANGIFTEGESPREK</a></center>
     </div>
 
-    <div id="resultaat-sectie">
-        <h3>📄 Jouw Concept Aangifte</h3>
-        <div id="weergave" style="white-space: pre-wrap; background: #eee; padding: 15px; border-radius: 5px;"></div>
-
-        <div class="prompt-box">
-            <button class="copy-btn" onclick="kopieerPrompt()">Kopieer Prompt</button>
-            <strong>🤖 Stap 3: Analyse via Gemini</strong>
-            <p style="font-size: 0.9em; margin-bottom: 5px;">Kopieer de onderstaande prompt en plak deze in het gesprek met Samir voor directe feedback:</p>
-            <code id="ai-prompt" style="display:block; font-size: 0.85em; color: #444;">
-                "Ik heb een proces-verbaal geschreven op basis van jouw verhaal. Kun je deze tekst controleren op de 7 Gouden W's, juridisch taalgebruik en objectiviteit? Geef feedback in maximaal 100 woorden. Hier is mijn tekst: [MIJN_TEKST]"
-            </code>
-        </div>
-
-        <div class="stap-box" style="border-left-color: #f9d423;">
-            <h4>✍️ Feedback Ruimte</h4>
-            <p style="font-size: 0.85em;">Plak hier de feedback van de AI (max. 100 woorden):</p>
-            <textarea class="feedback-invulveld" placeholder="Plak hier de feedback die je van Gemini krijgt..."></textarea>
-        </div>
+    <div class="stap-box">
+        <h3>Stap 2: Proces-Verbaal Inleveren</h3>
+        <input type="text" id="student-naam" placeholder="Je naam..." style="width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: 1px solid #ccc;">
+        <textarea id="input-tekst" placeholder="Schrijf hier de aangifte (ik-vorm, OVT)..." style="height: 150px;"></textarea>
+        <button class="submit-btn" onclick="verstuurData()">PUBLICEER VOOR DE KLAS</button>
     </div>
+
+    <h2 style="color: var(--police-blue); margin-top: 40px;">📑 Live Feed: Ingediende Aangiftes</h2>
+    <div id="live-feed">Wachten op inzendingen...</div>
 </div>
 
 <script>
-    function verwerkInlevering() {
-        const tekst = document.getElementById('student-tekst').value;
-        if(!tekst) return alert("Typ eerst je tekst!");
+    // --- FIREBASE CONFIGURATIE (Vervang dit door jouw eigen data) ---
+    const firebaseConfig = {
+        apiKey: ""AIzaSyBj8dXkl1rEfyx54_MDy_tYd2P7kAeU8VQ"",
+        authDomain: "q2les3samirgem.firebaseapp.com",
+        databaseURL: "https://q2les3samirgem-default-rtdb.europe-west1.firebasedatabase.app/",
+        projectId: "q2les3samirgem",
+        storageBucket: "q2les3samirgem.firebasestorage.app",
+        messagingSenderId: "8681998187",
+        appId: "1:8681998187:web:fd08067494a010dc572e2e"
+    };
+    // ----------------------------------------------------------------
 
-        // Toon resultaat
-        document.getElementById('weergave').innerText = tekst;
-        document.getElementById('resultaat-sectie').style.display = 'block';
+    // Initialiseer Firebase
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
 
-        // Update de prompt met de echte tekst van de student
-        const basisPrompt = "Ik heb een proces-verbaal geschreven op basis van jouw verhaal. Kun je deze tekst controleren op de 7 Gouden W's, juridisch taalgebruik en objectiviteit? Geef feedback in maximaal 100 woorden. Hier is mijn tekst: ";
-        document.getElementById('ai-prompt').innerText = basisPrompt + "\n\n\"" + tekst + "\"";
-        
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-    }
+    // Verstuur data naar Firebase
+    function verstuurData() {
+        const naam = document.getElementById('student-naam').value;
+        const tekst = document.getElementById('input-tekst').value;
 
-    function kopieerPrompt() {
-        const promptTekst = document.getElementById('ai-prompt').innerText;
-        navigator.clipboard.writeText(promptTekst).then(() => {
-            alert("Prompt gekopieerd! Plak hem nu in het Gemini-venster.");
+        if(!naam || !tekst) return alert("Naam en tekst zijn verplicht!");
+
+        database.ref('aangiftes').push({
+            naam: naam,
+            tekst: tekst,
+            timestamp: Date.now()
         });
+
+        document.getElementById('input-tekst').value = '';
+        alert("Je aangifte is gedeeld!");
     }
+
+    // Luister naar live updates (Realtime!)
+    database.ref('aangiftes').on('value', (snapshot) => {
+        const feed = document.getElementById('live-feed');
+        feed.innerHTML = '';
+        const data = snapshot.val();
+
+        if (data) {
+            // Sorteer op nieuwste eerst
+            Object.keys(data).reverse().forEach(key => {
+                const item = data[key];
+                const kaart = document.createElement('div');
+                kaart.className = 'aangifte-kaart';
+                kaart.innerHTML = `
+                    <div>
+                        <strong>🕵️ Agent: ${item.naam}</strong>
+                        <div style="white-space: pre-wrap; margin-top:10px; background: #f0f0f0; padding: 15px; border-radius: 5px;">${item.tekst}</div>
+                        <button class="feedback-btn" onclick="toggleFeedback('${key}')">FEEDBACK GEVEN</button>
+                    </div>
+                    <div class="feedback-kolom" id="fb-${key}">
+                        <strong>Controlelijst:</strong>
+                        <ul class="vinklijst">
+                            <li><input type="checkbox"> Bestanddeeltekst</li>
+                            <li><input type="checkbox"> Gouden W's</li>
+                            <li><input type="checkbox"> Redenen van wetenschap</li>
+                            <li><input type="checkbox"> Ik-vorm</li>
+                            <li><input type="checkbox"> Onvoltooid verleden tijd</li>
+                            <li><input type="checkbox"> Voor delict</li>
+                            <li><input type="checkbox"> Tijdens delict</li>
+                            <li><input type="checkbox"> Na delict</li>
+                        </ul>
+                        <textarea placeholder="Typ hier feedback voor deze student..." style="height: 60px; font-size: 0.8em; margin-top: 10px;"></textarea>
+                    </div>
+                `;
+                feed.appendChild(kaart);
+            });
+        }
+    });
+
+    function toggleFeedback(id) {
+        const elem = document.getElementById('fb-' + id);
+        elem.style.display = (elem.style.display === 'block') ? 'none' : 'block';
+    }
+
+    // TIP: Om alles te verwijderen na de les, ga naar Firebase Console en verwijder de 'aangiftes' node.
 </script>
 
 </body>
