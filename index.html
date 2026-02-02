@@ -97,10 +97,11 @@
             grid-template-columns: 1fr;
             gap: 20px;
             background: #fff;
+            transition: all 0.3s ease;
         }
 
         @media (min-width: 768px) {
-            .aangifte-kaart { grid-template-columns: 1fr 320px; }
+            .aangifte-kaart { grid-template-columns: 1fr 340px; }
         }
 
         .tekst-weergave { 
@@ -129,7 +130,13 @@
 
         .pdf-btn { border-color: #e53e3e; color: #e53e3e; }
 
-        .feedback-kolom { background: #fffdf2; border: 1px solid #f9d423; padding: 15px; border-radius: 4px; display: none; }
+        .feedback-kolom { 
+            background: #fffdf2; 
+            border: 1px solid #f9d423; 
+            padding: 15px; 
+            border-radius: 4px; 
+            display: block; /* Feedback is nu standaard zichtbaar voor de klas */
+        }
         
         .save-fb-btn {
             background: var(--primary-blue);
@@ -145,7 +152,7 @@
 
         .vinklijst { list-style: none; padding: 0; margin: 0 0 15px 0; }
         .vinklijst li { font-size: 0.85em; margin-bottom: 6px; display: flex; align-items: center; color: #000; }
-        .vinklijst input { margin-right: 10px; }
+        .vinklijst input { margin-right: 10px; transform: scale(1.2); }
 
         .admin-zone {
             margin-top: 100px;
@@ -190,12 +197,11 @@
         <button class="submit-btn" onclick="verstuurData()">Publiceer voor de klas</button>
     </div>
 
-    <h2 style="color: var(--primary-blue); margin-top: 50px; font-size: 1.2em; border-bottom: 1px solid var(--border-gray); padding-bottom: 10px;">Live Feed</h2>
+    <h2 style="color: var(--primary-blue); margin-top: 50px; font-size: 1.2em; border-bottom: 1px solid var(--border-gray); padding-bottom: 10px;">Live Feed (Inclusief Feedback)</h2>
     <div id="live-feed">Wachten op inzendingen...</div>
 
     <div class="admin-zone">
         <h4 style="margin-top:0; color:#718096;">DOCENTENBEHEER</h4>
-        <p style="font-size:0.85em; color:#718096;">Verwijder alle gegevens na afloop van de les om de sessie te resetten.</p>
         <button class="wis-btn-groot" onclick="wisAlles()">Wis alle teksten uit sessie</button>
     </div>
 </div>
@@ -227,14 +233,13 @@
         document.getElementById('input-tekst').value = '';
     }
 
-    function saveFeedback(key) {
-        const opm = document.getElementById('opm-' + key).value;
-        database.ref('aangiftes/' + key + '/feedback').update({ opmerking: opm });
-        alert("Feedback succesvol opgeslagen.");
-    }
-
+    // LIVE UPDATE FUNCTIES
     function updateCheck(key, field, value) {
         database.ref('aangiftes/' + key + '/feedback').update({ [field]: value });
+    }
+
+    function liveSaveFeedback(key, value) {
+        database.ref('aangiftes/' + key + '/feedback').update({ opmerking: value });
     }
 
     database.ref('aangiftes').on('value', (snapshot) => {
@@ -253,12 +258,11 @@
                         <strong style="color:var(--primary-blue); display:block; margin-bottom:10px;">Verbalisant: ${item.naam}</strong>
                         <div class="tekst-weergave">${item.tekst}</div>
                         <div class="btn-group">
-                            <button class="secondary-btn" onclick="toggleFB('${key}')">Feedbackpaneel</button>
                             <button class="secondary-btn pdf-btn" onclick="downloadPDF('${key}', '${item.naam}')">Download PDF</button>
                         </div>
                     </div>
-                    <div class="feedback-kolom" id="fb-${key}">
-                        <strong>CONTROLELIJST</strong>
+                    <div class="feedback-kolom">
+                        <strong>CONTROLELIJST (LIVE)</strong>
                         <ul class="vinklijst">
                             <li><input type="checkbox" ${fb.v1?'checked':''} onchange="updateCheck('${key}','v1',this.checked)"> Bestanddeeltekst</li>
                             <li><input type="checkbox" ${fb.v2?'checked':''} onchange="updateCheck('${key}','v2',this.checked)"> Gouden W's</li>
@@ -271,8 +275,8 @@
                             <li><input type="checkbox" ${fb.v8?'checked':''} onchange="updateCheck('${key}','v8',this.checked)"> Na delict</li>
                         </ul>
                         <strong>OPMERKINGEN</strong>
-                        <textarea id="opm-${key}" style="height: 80px; font-size: 0.85em; margin-top:5px;">${fb.opmerking || ""}</textarea>
-                        <button class="save-fb-btn" onclick="saveFeedback('${key}')">Feedback Opslaan</button>
+                        <textarea oninput="liveSaveFeedback('${key}', this.value)" style="height: 80px; font-size: 0.85em; margin-top:5px; border:1px solid #f9d423;" placeholder="Typ hier live feedback...">${fb.opmerking || ""}</textarea>
+                        <p style="font-size:0.7em; color:#718096; margin-top:5px;">⚠️ Feedback wordt direct gesynchroniseerd met de klas.</p>
                     </div>
                 `;
                 feed.appendChild(kaart);
@@ -280,18 +284,8 @@
         }
     });
 
-    function toggleFB(id) {
-        const el = document.getElementById('fb-' + id);
-        el.style.display = (el.style.display === 'block') ? 'none' : 'block';
-    }
-
     function downloadPDF(id, naam) {
         const element = document.getElementById('export-' + id);
-        const fbPaneel = document.getElementById('fb-' + id);
-        const wasVerborgen = fbPaneel.style.display === 'none';
-        
-        fbPaneel.style.display = 'block';
-
         const opt = {
             margin: 10,
             filename: `PV_Aangifte_${naam}.pdf`,
@@ -299,12 +293,7 @@
             html2canvas: { scale: 2, useCORS: true, letterRendering: true },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
-
-        setTimeout(() => {
-            html2pdf().set(opt).from(element).save().then(() => {
-                if(wasVerborgen) fbPaneel.style.display = 'none';
-            });
-        }, 500);
+        html2pdf().set(opt).from(element).save();
     }
 
     function wisAlles() {
