@@ -17,32 +17,37 @@
             --success-green: #28a745;
         }
 
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-light); color: var(--text-main); padding: 40px 20px; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-light); color: var(--text-main); padding: 40px 20px; line-height: 1.6; }
         .container { max-width: 950px; margin: auto; background: white; padding: 40px; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         .header { color: var(--primary-blue); border-bottom: 3px solid var(--accent-gold); text-transform: uppercase; text-align: center; padding-bottom: 15px; margin-bottom: 30px; }
         
         .stap-box { border: 1px solid var(--border-gray); border-left: 5px solid var(--primary-blue); padding: 25px; margin-bottom: 25px; background: #fff; }
-        .action-button { display: inline-block; background: var(--primary-blue); color: white !important; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; }
+        .action-button { display: inline-block; background: var(--primary-blue); color: white !important; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; }
         
-        input, textarea { width: 100%; padding: 12px; border: 1px solid var(--border-gray); border-radius: 4px; box-sizing: border-box; margin-bottom: 10px; }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid var(--border-gray); border-radius: 4px; box-sizing: border-box; margin-bottom: 10px; font-family: inherit; }
         .submit-btn { background: var(--success-green); color: white; border: none; padding: 15px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; text-transform: uppercase; }
 
-        /* Kaarten en Feedback */
-        .aangifte-kaart { border: 1px solid var(--border-gray); margin-top: 20px; padding: 20px; background: #fff; position: relative; }
-        .tekst-weergave { white-space: pre-wrap; background: #f8fafc; padding: 15px; border: 1px solid #edf2f7; margin-bottom: 10px; }
+        /* Live Feed Kaarten */
+        .aangifte-kaart { border: 1px solid var(--border-gray); margin-top: 25px; padding: 25px; background: #fff; border-radius: 4px; }
+        .tekst-weergave { white-space: pre-wrap; background: #f8fafc; padding: 20px; border: 1px solid #edf2f7; margin: 15px 0; font-size: 1em; color: #334155; }
         
-        .feedback-display { background: #eef6ff; border-left: 4px solid var(--primary-blue); padding: 10px 15px; margin-top: 10px; font-size: 0.9em; font-style: italic; }
-        .feedback-kolom { background: #fffdf2; border: 1px solid #f9d423; padding: 15px; border-radius: 4px; display: none; margin-top: 10px; }
+        /* Feedback Weergave */
+        .feedback-display { background: #f0f7ff; border-left: 4px solid var(--primary-blue); padding: 15px; margin-top: 15px; font-size: 0.95em; }
+        .feedback-display strong { color: var(--primary-blue); display: block; margin-bottom: 5px; }
+        
+        /* Beoordelingspaneel */
+        .feedback-kolom { background: #fffdf2; border: 1px solid #f9d423; padding: 20px; border-radius: 4px; display: none; margin-top: 15px; }
         
         .btn-group { display: flex; gap: 10px; margin-top: 10px; }
-        .secondary-btn { background: none; border: 1px solid var(--primary-blue); color: var(--primary-blue); padding: 8px 14px; cursor: pointer; font-size: 0.8em; font-weight: bold; text-transform: uppercase; }
-        .all-pdf-btn { background: #e53e3e; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin-bottom: 20px; font-weight: bold; }
+        .secondary-btn { background: none; border: 1px solid var(--primary-blue); color: var(--primary-blue); padding: 8px 16px; cursor: pointer; font-size: 0.85em; font-weight: bold; border-radius: 4px; }
+        .all-pdf-btn { background: #e53e3e; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; margin-bottom: 30px; font-weight: bold; text-transform: uppercase; }
 
-        .vinklijst { list-style: none; padding: 0; margin-bottom: 10px; font-size: 0.85em; }
-        .vinklijst li { margin-bottom: 5px; display: flex; align-items: center; }
-        .vinklijst input { margin-right: 10px; }
+        .vinklijst { list-style: none; padding: 0; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+        .vinklijst li { font-size: 0.85em; display: flex; align-items: center; }
+        .vinklijst input { width: auto; margin-right: 10px; margin-bottom: 0; }
 
-        .admin-zone { margin-top: 100px; padding: 20px; border: 2px dashed #cbd5e0; text-align: center; }
+        .admin-zone { margin-top: 80px; padding: 20px; border-top: 1px dashed var(--border-gray); text-align: center; }
+        .wis-link { color: #a0aec0; font-size: 0.8em; text-decoration: underline; cursor: pointer; background: none; border: none; }
     </style>
 </head>
 <body>
@@ -52,6 +57,7 @@
 
     <div class="stap-box">
         <h3>1. Informatieverzameling</h3>
+        <p>Gebruik de 7 Gouden W's tijdens het gesprek.</p>
         <center><a href="https://gemini.google.com/gem/e6e35023ee68" target="_blank" class="action-button">Start verhoormodule</a></center>
     </div>
 
@@ -63,16 +69,17 @@
     </div>
 
     <h2 style="color: var(--primary-blue); margin-top: 50px;">Live Feed</h2>
-    <button class="all-pdf-btn" onclick="downloadAllePDFs()">Download Alle PV's (PDF)</button>
+    <button class="all-pdf-btn" onclick="downloadAllePDFs()">Download Alle PV's als PDF</button>
     
-    <div id="live-feed">Laden...</div>
+    <div id="live-feed">Wachten op inzendingen...</div>
 
     <div class="admin-zone">
-        <button style="color:red; cursor:pointer;" onclick="wisAlles()">Wis alle sessie-data</button>
+        <button class="wis-link" onclick="wisAlles()">Docent: Wis alle sessie-data</button>
     </div>
 </div>
 
 <script>
+    // Firebase Config
     const firebaseConfig = {
         apiKey: "AIzaSyBj8dXkl1rEfyx54_MDy_tYd2P7kAeU8VQ",
         authDomain: "q2les3samirgem.firebaseapp.com",
@@ -89,24 +96,36 @@
     function verstuurData() {
         const naam = document.getElementById('student-naam').value;
         const tekst = document.getElementById('input-tekst').value;
-        if(!naam || !tekst) return alert("Vul alles in.");
+        if(!naam || !tekst) return alert("Voornaam en tekst zijn verplicht.");
 
         database.ref('aangiftes').push({
             naam: naam,
             tekst: tekst,
-            feedback: { v1:false, v2:false, v3:false, v4:false, v5:false, v6:false, v7:false, v8:false, opmerking: "" }
+            feedback: { v1:false, v2:false, v3:false, v4:false, v5:false, v6:false, opmerking: "" }
         });
         document.getElementById('input-tekst').value = '';
+        document.getElementById('student-naam').value = '';
     }
 
+    // Deze functie slaat alles in één keer op om 'focus loss' te voorkomen
     function saveFeedback(key) {
-        const opm = document.getElementById('opm-' + key).value;
-        database.ref('aangiftes/' + key + '/feedback').update({ opmerking: opm });
-        alert("Feedback gepubliceerd.");
-    }
+        const opmText = document.getElementById('opm-' + key).value;
+        const checks = {
+            v1: document.getElementById('v1-'+key).checked,
+            v2: document.getElementById('v2-'+key).checked,
+            v3: document.getElementById('v3-'+key).checked,
+            v4: document.getElementById('v4-'+key).checked,
+            v5: document.getElementById('v5-'+key).checked,
+            v6: document.getElementById('v6-'+key).checked
+        };
 
-    function updateCheck(key, field, value) {
-        database.ref('aangiftes/' + key + '/feedback').update({ [field]: value });
+        database.ref('aangiftes/' + key + '/feedback').set({
+            opmerking: opmText,
+            ...checks
+        }).then(() => {
+            alert("Feedback succesvol gepubliceerd.");
+            toggleFB(key); // Sluit het paneel na opslaan
+        });
     }
 
     database.ref('aangiftes').on('value', (snapshot) => {
@@ -120,29 +139,36 @@
                 const kaart = document.createElement('div');
                 kaart.className = 'aangifte-kaart';
                 kaart.innerHTML = `
-                    <div class="pv-sectie">
-                        <strong style="color:var(--primary-blue);">Verbalisant: ${item.naam}</strong>
+                    <div class="pv-content">
+                        <strong style="color:var(--primary-blue); font-size:1.1em;">Verbalisant: ${item.naam}</strong>
                         <div class="tekst-weergave">${item.tekst}</div>
                         
-                        ${fb.opmerking ? `<div class="feedback-display"><strong>Feedback:</strong> ${fb.opmerking}</div>` : ''}
+                        ${fb.opmerking ? `<div class="feedback-display"><strong>Feedback ontvangen:</strong>${fb.opmerking}</div>` : ''}
                         
                         <div class="btn-group">
-                            <button class="secondary-btn" onclick="toggleFB('${key}')">Beoordelen</button>
+                            <button class="secondary-btn" onclick="toggleFB('${key}')">Geef Feedback / Beoordeel</button>
                         </div>
                     </div>
 
                     <div class="feedback-kolom" id="fb-${key}">
+                        <h4 style="margin:0 0 10px 0;">Controlelijst</h4>
                         <ul class="vinklijst">
-                            <li><input type="checkbox" ${fb.v1?'checked':''} onchange="updateCheck('${key}','v1',this.checked)"> Bestanddeeltekst</li>
-                            <li><input type="checkbox" ${fb.v2?'checked':''} onchange="updateCheck('${key}','v2',this.checked)"> Gouden W's</li>
-                            <li><input type="checkbox" ${fb.v4?'checked':''} onchange="updateCheck('${key}','v4',this.checked)"> Ik-vorm / OVT</li>
+                            <li><input type="checkbox" id="v1-${key}" ${fb.v1?'checked':''}> Gouden W's</li>
+                            <li><input type="checkbox" id="v2-${key}" ${fb.v2?'checked':''}> Ik-vorm</li>
+                            <li><input type="checkbox" id="v3-${key}" ${fb.v3?'checked':''}> OVT</li>
+                            <li><input type="checkbox" id="v4-${key}" ${fb.v4?'checked':''}> Zakelijk</li>
+                            <li><input type="checkbox" id="v5-${key}" ${fb.v5?'checked':''}> Wetenschap</li>
+                            <li><input type="checkbox" id="v6-${key}" ${fb.v6?'checked':''}> Compleet</li>
                         </ul>
-                        <textarea id="opm-${key}" placeholder="Typ hier je feedback..." style="height:60px;">${fb.opmerking || ""}</textarea>
-                        <button class="submit-btn" style="padding:5px;" onclick="saveFeedback('${key}')">Feedback Opslaan</button>
+                        <strong>Opmerkingen (max 100 woorden):</strong>
+                        <textarea id="opm-${key}" placeholder="Typ hier je uitgebreide feedback..." style="height:100px;">${fb.opmerking || ""}</textarea>
+                        <button class="submit-btn" style="padding:10px;" onclick="saveFeedback('${key}')">Feedback naar Live Feed sturen</button>
                     </div>
                 `;
                 feed.appendChild(kaart);
             });
+        } else {
+            feed.innerHTML = "<p>Nog geen aangiftes gepubliceerd.</p>";
         }
     });
 
@@ -153,12 +179,20 @@
 
     function downloadAllePDFs() {
         const element = document.getElementById('live-feed');
-        const opt = { margin: 10, filename: 'Alle_PV_Aangiftes.pdf', html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } };
+        const opt = { 
+            margin: [10, 10], 
+            filename: 'Dossier_Samir_Alle_Aangiftes.pdf', 
+            html2canvas: { scale: 2 }, 
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: 'avoid-all', before: '.aangifte-kaart' }
+        };
         html2pdf().set(opt).from(element).save();
     }
 
     function wisAlles() {
-        if(confirm("Sessie resetten?")) database.ref('aangiftes').remove();
+        if(confirm("Weet u zeker dat u de hele sessie wilt wissen?")) {
+            database.ref('aangiftes').remove();
+        }
     }
 </script>
 
