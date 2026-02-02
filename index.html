@@ -110,6 +110,7 @@
             border-radius: 4px; 
             border: 1px solid #edf2f7; 
             font-size: 0.95em; 
+            color: #000; /* Zorg voor puur zwart voor PDF export */
         }
 
         .btn-group { display: flex; gap: 10px; margin-top: 15px; }
@@ -143,7 +144,7 @@
         }
 
         .vinklijst { list-style: none; padding: 0; margin: 0 0 15px 0; }
-        .vinklijst li { font-size: 0.85em; margin-bottom: 6px; display: flex; align-items: center; }
+        .vinklijst li { font-size: 0.85em; margin-bottom: 6px; display: flex; align-items: center; color: #000; }
         .vinklijst input { margin-right: 10px; }
 
         .admin-zone {
@@ -200,7 +201,6 @@
 </div>
 
 <script>
-    // Firebase configuratie uit jouw bron
     const firebaseConfig = {
         apiKey: "AIzaSyBj8dXkl1rEfyx54_MDy_tYd2P7kAeU8VQ",
         authDomain: "q2les3samirgem.firebaseapp.com",
@@ -288,23 +288,32 @@
         const element = document.getElementById('export-' + id);
         const fbPaneel = document.getElementById('fb-' + id);
         const wasVerborgen = fbPaneel.style.display === 'none';
+        
+        // Zorg dat het paneel zichtbaar is voor de scan
         fbPaneel.style.display = 'block';
 
         const opt = {
             margin: 10,
             filename: `PV_Aangifte_${naam}.pdf`,
             image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 2 },
+            html2canvas: { 
+                scale: 2, 
+                useCORS: true, 
+                letterRendering: true 
+            },
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         };
 
-        html2pdf().set(opt).from(element).save().then(() => {
-            if(wasVerborgen) fbPaneel.style.display = 'none';
-        });
+        // Kleine vertraging om rendering te garanderen
+        setTimeout(() => {
+            html2pdf().set(opt).from(element).save().then(() => {
+                if(wasVerborgen) fbPaneel.style.display = 'none';
+            });
+        }, 500);
     }
 
     function wisAlles() {
-        if(confirm("Weet u zeker dat u alle ingeleverde teksten wilt verwijderen? Dit kan niet ongedaan worden gemaakt.")) {
+        if(confirm("Weet u zeker dat u alle ingeleverde teksten wilt verwijderen?")) {
             database.ref('aangiftes').remove();
         }
     }
