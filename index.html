@@ -15,6 +15,7 @@
             --bg-light: #f4f7f9;
             --text-main: #2d3748;
             --success-green: #28a745;
+            --danger-red: #e53e3e;
         }
 
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-light); color: var(--text-main); padding: 40px 20px; line-height: 1.6; }
@@ -40,14 +41,17 @@
         
         .btn-group { display: flex; gap: 10px; margin-top: 10px; }
         .secondary-btn { background: none; border: 1px solid var(--primary-blue); color: var(--primary-blue); padding: 8px 16px; cursor: pointer; font-size: 0.85em; font-weight: bold; border-radius: 4px; }
-        .all-pdf-btn { background: #e53e3e; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; margin-bottom: 30px; font-weight: bold; text-transform: uppercase; }
+        .all-pdf-btn { background: #4a5568; color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; margin-bottom: 30px; font-weight: bold; text-transform: uppercase; }
+
+        /* Reset Knop Styling */
+        .reset-btn { background: var(--danger-red); color: white; border: none; padding: 12px 24px; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; margin-top: 15px; }
+        .reset-btn:hover { background: #c53030; }
 
         .vinklijst { list-style: none; padding: 0; margin-bottom: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
         .vinklijst li { font-size: 0.85em; display: flex; align-items: center; }
         .vinklijst input { width: auto; margin-right: 10px; margin-bottom: 0; }
 
-        .admin-zone { margin-top: 80px; padding: 20px; border-top: 1px dashed var(--border-gray); text-align: center; }
-        .wis-link { color: #a0aec0; font-size: 0.8em; text-decoration: underline; cursor: pointer; background: none; border: none; }
+        .admin-zone { margin-top: 80px; padding: 30px; border: 2px dashed var(--border-gray); text-align: center; background: #fff5f5; border-radius: 8px; }
     </style>
 </head>
 <body>
@@ -74,7 +78,9 @@
     <div id="live-feed">Wachten op inzendingen...</div>
 
     <div class="admin-zone">
-        <button class="wis-link" onclick="wisAlles()">Docent: Wis alle sessie-data</button>
+        <h3 style="color: var(--danger-red); margin-top: 0;">Docenten Beheer</h3>
+        <p style="font-size: 0.9em; color: #718096;">Let op: Hiermee wist u alle ingestuurde PV's en feedback van de huidige sessie definitief.</p>
+        <button class="reset-btn" onclick="wisAlles()">Sessie Volledig Resetten / Leegmaken</button>
     </div>
 </div>
 
@@ -107,7 +113,6 @@
         document.getElementById('student-naam').value = '';
     }
 
-    // Deze functie slaat alles in één keer op om 'focus loss' te voorkomen
     function saveFeedback(key) {
         const opmText = document.getElementById('opm-' + key).value;
         const checks = {
@@ -124,7 +129,7 @@
             ...checks
         }).then(() => {
             alert("Feedback succesvol gepubliceerd.");
-            toggleFB(key); // Sluit het paneel na opslaan
+            toggleFB(key);
         });
     }
 
@@ -184,17 +189,4 @@
             filename: 'Dossier_Samir_Alle_Aangiftes.pdf', 
             html2canvas: { scale: 2 }, 
             jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak: { mode: 'avoid-all', before: '.aangifte-kaart' }
-        };
-        html2pdf().set(opt).from(element).save();
-    }
-
-    function wisAlles() {
-        if(confirm("Weet u zeker dat u de hele sessie wilt wissen?")) {
-            database.ref('aangiftes').remove();
-        }
-    }
-</script>
-
-</body>
-</html>
+            pagebreak: { mode:
