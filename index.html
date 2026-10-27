@@ -49,7 +49,7 @@
 
         .admin-zone { margin-top: 80px; padding: 30px; border: 2px dashed var(--danger-red); text-align: center; background: #fff5f5; border-radius: 8px; }
 
-        /* --- Mistral Chatbot met Samir Foto --- */
+        /* --- Mistral Chatbot styling met Samir Foto --- */
         .chat-module {
             border: 1px solid var(--border-gray);
             border-radius: 6px;
@@ -95,21 +95,6 @@
             background-color: var(--success-green);
             border-radius: 50%;
             display: inline-block;
-        }
-        .chat-api-config {
-            background: #f8fafc;
-            padding: 8px 18px;
-            border-bottom: 1px solid var(--border-gray);
-            font-size: 0.85em;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .chat-api-config input {
-            margin-bottom: 0;
-            padding: 5px 10px;
-            font-size: 0.85em;
-            max-width: 320px;
         }
         .chat-window {
             height: 380px;
@@ -217,7 +202,7 @@
 <div class="container">
     <div class="header"><h1>Dossier: Aangifte van Samir</h1></div>
 
-    <!-- STAP 1: MISTRAL CHATBOT VERHOORMODULE MET SAMIR FOTO -->
+    <!-- STAP 1: MISTRAL CHATBOT VERHOORMODULE -->
     <div class="stap-box">
         <div style="display: flex; justify-content: space-between; align-items: baseline;">
             <h3>1. Informatieverzameling (Verhoor Samir)</h3>
@@ -235,13 +220,6 @@
                 </div>
             </div>
 
-            <!-- API Key config balk -->
-            <div class="chat-api-config">
-                <label for="mistral-api-key"><strong>Mistral API Key:</strong></label>
-                <input type="password" id="mistral-api-key" placeholder="Plak hier je Mistral API-sleutel" onchange="bewaarApiKey(this.value)">
-                <span style="color: #64748b; font-size: 0.9em;">(Optioneel in te vullen of vast te zetten in het script)</span>
-            </div>
-
             <!-- Berichtenvenster -->
             <div class="chat-window" id="chat-window">
                 <div class="chat-row agent">
@@ -252,7 +230,7 @@
                 </div>
             </div>
 
-            <!-- Invoerveld en knop -->
+            <!-- Invoerveld en verzendknop -->
             <div class="chat-controls">
                 <textarea id="chat-input" placeholder="Typ je verhoorvraag aan Samir... (Druk op Enter om te verzenden)" onkeydown="checkChatEnter(event)"></textarea>
                 <button class="chat-btn-send" id="chat-send-btn" onclick="verstuurMistralVraag()">Vraag</button>
@@ -284,26 +262,15 @@
     // ==========================================
     // 1. MISTRAL CHATBOT CONFIGURATIE & LOGICA
     // ==========================================
-    const HARDCODED_MISTRAL_KEY = ""; 
+    
+    // PLAK HIERONDER JOUW MISTRAL API SLEUTEL (van console.mistral.ai):
+    const HARDCODED_MISTRAL_KEY = "HIER_JE_ECHTE_MISTRAL_API_KEY_PLAKKEN"; 
+
+    // Dit is het ID van de chatbot-agent van Samir:
     const MISTRAL_AGENT_ID = "ag_01a17cfc51e8724baa3c04872f12e81f";
     const MISTRAL_AGENT_VERSION = 0;
 
     let mistralConversationId = null;
-
-    window.addEventListener('DOMContentLoaded', () => {
-        const opgeslagenSleutel = localStorage.getItem('mistral_user_api_key');
-        if (opgeslagenSleutel) {
-            document.getElementById('mistral-api-key').value = opgeslagenSleutel;
-        } else if (HARDCODED_MISTRAL_KEY) {
-            document.getElementById('mistral-api-key').value = HARDCODED_MISTRAL_KEY;
-        }
-    });
-
-    function bewaarApiKey(sleutel) {
-        if(sleutel.trim()) {
-            localStorage.setItem('mistral_user_api_key', sleutel.trim());
-        }
-    }
 
     function checkChatEnter(e) {
         if (e.key === "Enter" && !e.shiftKey) {
@@ -320,9 +287,8 @@
 
         if (!userText) return;
 
-        const apiKey = document.getElementById('mistral-api-key').value.trim() || HARDCODED_MISTRAL_KEY;
-        if (!apiKey) {
-            alert("Voer a.u.b. eerst een geldige Mistral API Key in om het gesprek te starten.");
+        if (!HARDCODED_MISTRAL_KEY || HARDCODED_MISTRAL_KEY === "HIER_JE_ECHTE_MISTRAL_API_KEY_PLAKKEN") {
+            alert("Let op docent: er is nog geen Mistral API Key ingevuld op regel 183 van het script.");
             return;
         }
 
@@ -376,7 +342,7 @@
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
-                    "Authorization": `Bearer ${apiKey}`
+                    "Authorization": `Bearer ${HARDCODED_MISTRAL_KEY}`
                 },
                 body: JSON.stringify(payload)
             });
@@ -434,7 +400,7 @@
             errorRow.style.alignSelf = 'center';
             errorRow.innerHTML = `
                 <div class="chat-bubble error">
-                    Fout bij communicatie: ${err.message}. Controleer je API-key.
+                    Fout bij communicatie: ${err.message}. Controleer de API-key.
                 </div>
             `;
             chatWindow.appendChild(errorRow);
