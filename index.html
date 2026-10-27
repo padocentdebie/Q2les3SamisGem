@@ -23,7 +23,7 @@
         .header { color: var(--primary-blue); border-bottom: 3px solid var(--accent-gold); text-transform: uppercase; text-align: center; padding-bottom: 15px; margin-bottom: 30px; }
         
         .stap-box { border: 1px solid var(--border-gray); border-left: 5px solid var(--primary-blue); padding: 25px; margin-bottom: 25px; background: #fff; }
-        .action-button { display: inline-block; background: var(--primary-blue); color: white !important; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; }
+        .action-button { display: inline-block; background: var(--primary-blue); color: white !important; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; border: none; }
         
         input, textarea { width: 100%; padding: 12px; border: 1px solid var(--border-gray); border-radius: 4px; box-sizing: border-box; margin-bottom: 10px; font-family: inherit; }
         .submit-btn { background: var(--success-green); color: white; border: none; padding: 15px; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; text-transform: uppercase; }
@@ -48,6 +48,113 @@
         .vinklijst input { width: auto; margin-right: 10px; margin-bottom: 0; cursor: pointer; }
 
         .admin-zone { margin-top: 80px; padding: 30px; border: 2px dashed var(--danger-red); text-align: center; background: #fff5f5; border-radius: 8px; }
+
+        /* --- Nieuwe styles voor de Mistral Chatbot --- */
+        .chat-module {
+            border: 1px solid var(--border-gray);
+            border-radius: 6px;
+            background: #fff;
+            overflow: hidden;
+            margin-top: 15px;
+        }
+        .chat-api-config {
+            background: #f1f5f9;
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border-gray);
+            font-size: 0.85em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .chat-api-config input {
+            margin-bottom: 0;
+            padding: 6px 10px;
+            font-size: 0.9em;
+            max-width: 320px;
+        }
+        .chat-window {
+            height: 380px;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .chat-bubble {
+            max-width: 80%;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+        .chat-bubble.user {
+            align-self: flex-end;
+            background-color: var(--primary-blue);
+            color: #ffffff;
+            border-bottom-right-radius: 1px;
+        }
+        .chat-bubble.agent {
+            align-self: flex-start;
+            background-color: #ffffff;
+            color: var(--text-main);
+            border: 1px solid var(--border-gray);
+            border-left: 4px solid var(--accent-gold);
+            border-bottom-left-radius: 1px;
+        }
+        .chat-bubble.loading {
+            align-self: flex-start;
+            background-color: #e2e8f0;
+            color: #64748b;
+            font-style: italic;
+        }
+        .chat-bubble.error {
+            align-self: center;
+            background-color: #fee2e2;
+            color: var(--danger-red);
+            border: 1px solid #fecaca;
+            font-size: 0.85em;
+        }
+        .chat-controls {
+            padding: 15px;
+            background: #fff;
+            border-top: 1px solid var(--border-gray);
+            display: flex;
+            gap: 10px;
+        }
+        .chat-controls textarea {
+            margin-bottom: 0;
+            resize: none;
+            height: 48px;
+        }
+        .chat-btn-send {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .chat-btn-send:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+        }
+        .chat-reset-btn {
+            background: none;
+            border: 1px solid var(--border-gray);
+            color: #64748b;
+            padding: 6px 12px;
+            font-size: 0.8em;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .chat-reset-btn:hover {
+            color: var(--danger-red);
+            border-color: var(--danger-red);
+        }
     </style>
 </head>
 <body>
@@ -55,12 +162,38 @@
 <div class="container">
     <div class="header"><h1>Dossier: Aangifte van Samir</h1></div>
 
+    <!-- STAP 1: MISTRAL CHATBOT VERHOORMODULE -->
     <div class="stap-box">
-        <h3>1. Informatieverzameling</h3>
-        <p>Gebruik de 7 Gouden W's tijdens het gesprek.</p>
-        <center><a href="https://gemini.google.com/gem/e6e35023ee68" target="_blank" class="action-button">Start verhoormodule</a></center>
+        <div style="display: flex; justify-content: space-between; align-items: baseline;">
+            <h3>1. Informatieverzameling (Verhoor Samir)</h3>
+            <button class="chat-reset-btn" onclick="resetChat()">Gesprek wissen / opnieuw beginnen</button>
+        </div>
+        <p>Stel gerichte vragen aan aangever Samir aan de hand van de 7 Gouden W's (Wie, Wat, Waar, Wanneer, Waarmee, Op welke wijze, Waarom). Vraag goed door!</p>
+
+        <div class="chat-module">
+            <!-- API Key instellen -->
+            <div class="chat-api-config">
+                <label for="mistral-api-key"><strong>Mistral API Key:</strong></label>
+                <input type="password" id="mistral-api-key" placeholder="Plak hier je Mistral API-sleutel" onchange="bewaarApiKey(this.value)">
+                <span style="color: #64748b; font-size: 0.9em;">(Optioneel in te vullen of vast te zetten in het script)</span>
+            </div>
+
+            <!-- Berichtenvenster -->
+            <div class="chat-window" id="chat-window">
+                <div class="chat-bubble agent">
+                    <strong>Samir:</strong> Hallo verbalisant, ik kom aangifte doen van wat me zojuist is overkomen...
+                </div>
+            </div>
+
+            <!-- Invoerveld en verzendknop -->
+            <div class="chat-controls">
+                <textarea id="chat-input" placeholder="Typ je verhoorvraag aan Samir... (Druk op Enter om te verzenden)" onkeydown="checkChatEnter(event)"></textarea>
+                <button class="chat-btn-send" id="chat-send-btn" onclick="verstuurMistralVraag()">Vraag</button>
+            </div>
+        </div>
     </div>
 
+    <!-- STAP 2: PROCES-VERBAAL INLEVEREN -->
     <div class="stap-box">
         <h3>2. Proces-Verbaal Inleveren</h3>
         <input type="text" id="student-naam" placeholder="Je voornaam">
@@ -81,7 +214,181 @@
 </div>
 
 <script>
-    // Firebase Config (Houd de configuratie zoals deze was)
+    // ==========================================
+    // 1. MISTRAL CHATBOT CONFIGURATIE & LOGICA
+    // ==========================================
+    // Vul eventueel hier direct je API-key in als je deze niet handmatig in het tekstveld wilt plakken:
+    const HARDCODED_MISTRAL_KEY = ""; 
+    const MISTRAL_AGENT_ID = "ag_01a17cfc51e8724baa3c04872f12e81f";
+    const MISTRAL_AGENT_VERSION = 0;
+
+    let mistralConversationId = null;
+
+    // Haal eventueel opgeslagen sleutel uit localStorage
+    window.addEventListener('DOMContentLoaded', () => {
+        const opgeslagenSleutel = localStorage.getItem('mistral_user_api_key');
+        if (opgeslagenSleutel) {
+            document.getElementById('mistral-api-key').value = opgeslagenSleutel;
+        } else if (HARDCODED_MISTRAL_KEY) {
+            document.getElementById('mistral-api-key').value = HARDCODED_MISTRAL_KEY;
+        }
+    });
+
+    function bewaarApiKey(sleutel) {
+        if(sleutel.trim()) {
+            localStorage.setItem('mistral_user_api_key', sleutel.trim());
+        }
+    }
+
+    function checkChatEnter(e) {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            verstuurMistralVraag();
+        }
+    }
+
+    async function verstuurMistralVraag() {
+        const inputElem = document.getElementById('chat-input');
+        const userText = inputElem.value.trim();
+        const chatWindow = document.getElementById('chat-window');
+        const sendBtn = document.getElementById('chat-send-btn');
+
+        if (!userText) return;
+
+        // Bepaal de te gebruiken API sleutel
+        const apiKey = document.getElementById('mistral-api-key').value.trim() || HARDCODED_MISTRAL_KEY;
+        if (!apiKey) {
+            alert("Voer a.u.b. eerst een geldige Mistral API Key in om het gesprek te starten.");
+            return;
+        }
+
+        // Toon bericht van student
+        const userBubble = document.createElement('div');
+        userBubble.className = 'chat-bubble user';
+        userBubble.innerHTML = `<strong>Jij:</strong> ${escapeHtml(userText)}`;
+        chatWindow.appendChild(userBubble);
+        inputElem.value = '';
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        // Toon laadindicator
+        const loadingBubble = document.createElement('div');
+        loadingBubble.className = 'chat-bubble loading';
+        loadingBubble.id = 'chat-loading';
+        loadingBubble.innerText = 'Samir denkt even na en antwoordt...';
+        chatWindow.appendChild(loadingBubble);
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+
+        sendBtn.disabled = true;
+
+        try {
+            // Bouw het verzoek op volgens de specificatie
+            let url = "https://api.mistral.ai/v1/conversations";
+            let payload = {
+                agent_id: MISTRAL_AGENT_ID,
+                agent_version: MISTRAL_AGENT_VERSION,
+                inputs: [
+                    { role: "user", content: userText }
+                ]
+            };
+
+            // Als er al een actieve sessie loopt, voeg het toe aan de lopende conversatie
+            if (mistralConversationId) {
+                url = `https://api.mistral.ai/v1/conversations/${mistralConversationId}`;
+                payload = {
+                    inputs: [
+                        { role: "user", content: userText }
+                    ]
+                };
+            }
+
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${apiKey}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.message || `Fout van Mistral server (${response.status})`);
+            }
+
+            const data = await response.json();
+
+            // Bewaar de sessie-ID voor vervolgvragen
+            if (data.id || data.conversation_id) {
+                mistralConversationId = data.id || data.conversation_id;
+            }
+
+            // Haal de tekst van het antwoord op
+            let replyText = "";
+            if (data.outputs && Array.isArray(data.outputs)) {
+                const messageOutputs = data.outputs.filter(o => o.type === "message.output");
+                if (messageOutputs.length > 0) {
+                    const lastMsg = messageOutputs[messageOutputs.length - 1];
+                    if (typeof lastMsg.content === 'string') {
+                        replyText = lastMsg.content;
+                    } else if (Array.isArray(lastMsg.content)) {
+                        replyText = lastMsg.content.map(c => c.text || c).join("");
+                    }
+                }
+            } else if (data.choices && data.choices[0]?.message?.content) {
+                replyText = data.choices[0].message.content;
+            }
+
+            if (!replyText) {
+                replyText = "Samir blijft even stil of heeft geen antwoord.";
+            }
+
+            // Verwijder laadindicator en toon antwoord
+            const loader = document.getElementById('chat-loading');
+            if (loader) loader.remove();
+
+            const agentBubble = document.createElement('div');
+            agentBubble.className = 'chat-bubble agent';
+            agentBubble.innerHTML = `<strong>Samir:</strong> ${escapeHtml(replyText).replace(/\n/g, '<br>')}`;
+            chatWindow.appendChild(agentBubble);
+
+        } catch (err) {
+            const loader = document.getElementById('chat-loading');
+            if (loader) loader.remove();
+
+            const errorBubble = document.createElement('div');
+            errorBubble.className = 'chat-bubble error';
+            errorBubble.innerText = `Fout bij communicatie: ${err.message}. Controleer je API-key.`;
+            chatWindow.appendChild(errorBubble);
+        } finally {
+            sendBtn.disabled = false;
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+    }
+
+    function resetChat() {
+        if (confirm("Wil je het gesprek met Samir opnieuw beginnen?")) {
+            mistralConversationId = null;
+            const chatWindow = document.getElementById('chat-window');
+            chatWindow.innerHTML = `
+                <div class="chat-bubble agent">
+                    <strong>Samir:</strong> Hallo verbalisant, ik kom aangifte doen van wat me zojuist is overkomen...
+                </div>
+            `;
+        }
+    }
+
+    function escapeHtml(text) {
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+    // ==========================================
+    // 2. FIREBASE & BEHEER LOGICA (ORIGINEEL)
+    // ==========================================
     const firebaseConfig = {
         apiKey: "AIzaSyBj8dXkl1rEfyx54_MDy_tYd2P7kAeU8VQ",
         authDomain: "q2les3samirgem.firebaseapp.com",
@@ -109,7 +416,6 @@
         document.getElementById('student-naam').value = '';
     }
 
-    // UPDATE: Feedback aanvullen i.p.v. overschrijven
     function saveFeedback(key) {
         const nieuweOpm = document.getElementById('opm-' + key).value;
         if(!nieuweOpm.trim()) return alert("Voer a.u.b. een opmerking in.");
@@ -120,7 +426,6 @@
             const huidigeData = snapshot.val() || {};
             const oudeTekst = huidigeData.opmerking || "";
             
-            // Tekst samenvoegen met scheidingsteken
             const samengevoegdeTekst = oudeTekst 
                 ? oudeTekst + "\n----------------\n" + nieuweOpm 
                 : nieuweOpm;
@@ -209,7 +514,6 @@
         html2pdf().set(opt).from(element).save();
     }
 
-    // FIX: Reset functie geforceerd via set(null) met bevestiging
     function wisAlles() {
         if(confirm("WAARSCHUWING: U wist hiermee alle data voor de hele klas. Dit kan NIET ongedaan worden gemaakt. Doorgaan?")) {
             database.ref('aangiftes').set(null)
