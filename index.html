@@ -49,7 +49,7 @@
 
         .admin-zone { margin-top: 80px; padding: 30px; border: 2px dashed var(--danger-red); text-align: center; background: #fff5f5; border-radius: 8px; }
 
-        /* --- Nieuwe styles voor de Mistral Chatbot --- */
+        /* --- Mistral Chatbot met Samir Foto --- */
         .chat-module {
             border: 1px solid var(--border-gray);
             border-radius: 6px;
@@ -57,9 +57,48 @@
             overflow: hidden;
             margin-top: 15px;
         }
+        .chat-header-profile {
+            background: #ffffff;
+            padding: 12px 18px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            border-bottom: 1px solid var(--border-gray);
+        }
+        .chat-header-img {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-gold);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .chat-profile-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .chat-profile-name {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: var(--primary-blue);
+        }
+        .chat-profile-status {
+            font-size: 0.85em;
+            color: #64748b;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .chat-status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--success-green);
+            border-radius: 50%;
+            display: inline-block;
+        }
         .chat-api-config {
-            background: #f1f5f9;
-            padding: 10px 15px;
+            background: #f8fafc;
+            padding: 8px 18px;
             border-bottom: 1px solid var(--border-gray);
             font-size: 0.85em;
             display: flex;
@@ -68,8 +107,8 @@
         }
         .chat-api-config input {
             margin-bottom: 0;
-            padding: 6px 10px;
-            font-size: 0.9em;
+            padding: 5px 10px;
+            font-size: 0.85em;
             max-width: 320px;
         }
         .chat-window {
@@ -81,8 +120,28 @@
             flex-direction: column;
             gap: 12px;
         }
+        .chat-row {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            max-width: 85%;
+        }
+        .chat-row.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+        .chat-row.agent {
+            align-self: flex-start;
+        }
+        .chat-avatar-small {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-gray);
+            flex-shrink: 0;
+        }
         .chat-bubble {
-            max-width: 80%;
             padding: 10px 14px;
             border-radius: 6px;
             font-size: 0.95em;
@@ -90,13 +149,11 @@
             word-wrap: break-word;
         }
         .chat-bubble.user {
-            align-self: flex-end;
             background-color: var(--primary-blue);
             color: #ffffff;
             border-bottom-right-radius: 1px;
         }
         .chat-bubble.agent {
-            align-self: flex-start;
             background-color: #ffffff;
             color: var(--text-main);
             border: 1px solid var(--border-gray);
@@ -104,13 +161,11 @@
             border-bottom-left-radius: 1px;
         }
         .chat-bubble.loading {
-            align-self: flex-start;
             background-color: #e2e8f0;
             color: #64748b;
             font-style: italic;
         }
         .chat-bubble.error {
-            align-self: center;
             background-color: #fee2e2;
             color: var(--danger-red);
             border: 1px solid #fecaca;
@@ -162,7 +217,7 @@
 <div class="container">
     <div class="header"><h1>Dossier: Aangifte van Samir</h1></div>
 
-    <!-- STAP 1: MISTRAL CHATBOT VERHOORMODULE -->
+    <!-- STAP 1: MISTRAL CHATBOT VERHOORMODULE MET SAMIR FOTO -->
     <div class="stap-box">
         <div style="display: flex; justify-content: space-between; align-items: baseline;">
             <h3>1. Informatieverzameling (Verhoor Samir)</h3>
@@ -171,7 +226,16 @@
         <p>Stel gerichte vragen aan aangever Samir aan de hand van de 7 Gouden W's (Wie, Wat, Waar, Wanneer, Waarmee, Op welke wijze, Waarom). Vraag goed door!</p>
 
         <div class="chat-module">
-            <!-- API Key instellen -->
+            <!-- Samir Profiel header -->
+            <div class="chat-header-profile">
+                <img src="samir.jpeg" alt="Samir" class="chat-header-img" onerror="this.style.display='none'">
+                <div class="chat-profile-info">
+                    <span class="chat-profile-name">Samir (Aangever / Slachtoffer)</span>
+                    <span class="chat-profile-status"><span class="chat-status-dot"></span> Aanwezig in de verhoorkamer</span>
+                </div>
+            </div>
+
+            <!-- API Key config balk -->
             <div class="chat-api-config">
                 <label for="mistral-api-key"><strong>Mistral API Key:</strong></label>
                 <input type="password" id="mistral-api-key" placeholder="Plak hier je Mistral API-sleutel" onchange="bewaarApiKey(this.value)">
@@ -180,12 +244,15 @@
 
             <!-- Berichtenvenster -->
             <div class="chat-window" id="chat-window">
-                <div class="chat-bubble agent">
-                    <strong>Samir:</strong> Hallo verbalisant, ik kom aangifte doen van wat me zojuist is overkomen...
+                <div class="chat-row agent">
+                    <img src="samir.jpeg" alt="Samir" class="chat-avatar-small" onerror="this.style.display='none'">
+                    <div class="chat-bubble agent">
+                        <strong>Samir:</strong> Hallo verbalisant, ik kom aangifte doen van wat me zojuist is overkomen...
+                    </div>
                 </div>
             </div>
 
-            <!-- Invoerveld en verzendknop -->
+            <!-- Invoerveld en knop -->
             <div class="chat-controls">
                 <textarea id="chat-input" placeholder="Typ je verhoorvraag aan Samir... (Druk op Enter om te verzenden)" onkeydown="checkChatEnter(event)"></textarea>
                 <button class="chat-btn-send" id="chat-send-btn" onclick="verstuurMistralVraag()">Vraag</button>
@@ -217,14 +284,12 @@
     // ==========================================
     // 1. MISTRAL CHATBOT CONFIGURATIE & LOGICA
     // ==========================================
-    // Vul eventueel hier direct je API-key in als je deze niet handmatig in het tekstveld wilt plakken:
     const HARDCODED_MISTRAL_KEY = ""; 
     const MISTRAL_AGENT_ID = "ag_01a17cfc51e8724baa3c04872f12e81f";
     const MISTRAL_AGENT_VERSION = 0;
 
     let mistralConversationId = null;
 
-    // Haal eventueel opgeslagen sleutel uit localStorage
     window.addEventListener('DOMContentLoaded', () => {
         const opgeslagenSleutel = localStorage.getItem('mistral_user_api_key');
         if (opgeslagenSleutel) {
@@ -255,33 +320,40 @@
 
         if (!userText) return;
 
-        // Bepaal de te gebruiken API sleutel
         const apiKey = document.getElementById('mistral-api-key').value.trim() || HARDCODED_MISTRAL_KEY;
         if (!apiKey) {
             alert("Voer a.u.b. eerst een geldige Mistral API Key in om het gesprek te starten.");
             return;
         }
 
-        // Toon bericht van student
-        const userBubble = document.createElement('div');
-        userBubble.className = 'chat-bubble user';
-        userBubble.innerHTML = `<strong>Jij:</strong> ${escapeHtml(userText)}`;
-        chatWindow.appendChild(userBubble);
+        // Toon student bericht (rechts)
+        const userRow = document.createElement('div');
+        userRow.className = 'chat-row user';
+        userRow.innerHTML = `
+            <div class="chat-bubble user">
+                <strong>Jij:</strong> ${escapeHtml(userText)}
+            </div>
+        `;
+        chatWindow.appendChild(userRow);
         inputElem.value = '';
         chatWindow.scrollTop = chatWindow.scrollHeight;
 
-        // Toon laadindicator
-        const loadingBubble = document.createElement('div');
-        loadingBubble.className = 'chat-bubble loading';
-        loadingBubble.id = 'chat-loading';
-        loadingBubble.innerText = 'Samir denkt even na en antwoordt...';
-        chatWindow.appendChild(loadingBubble);
+        // Toon laadindicator met avatar van Samir (links)
+        const loadingRow = document.createElement('div');
+        loadingRow.className = 'chat-row agent';
+        loadingRow.id = 'chat-loading';
+        loadingRow.innerHTML = `
+            <img src="samir.jpeg" alt="Samir" class="chat-avatar-small" onerror="this.style.display='none'">
+            <div class="chat-bubble loading">
+                <em>Samir denkt even na en antwoordt...</em>
+            </div>
+        `;
+        chatWindow.appendChild(loadingRow);
         chatWindow.scrollTop = chatWindow.scrollHeight;
 
         sendBtn.disabled = true;
 
         try {
-            // Bouw het verzoek op volgens de specificatie
             let url = "https://api.mistral.ai/v1/conversations";
             let payload = {
                 agent_id: MISTRAL_AGENT_ID,
@@ -291,7 +363,6 @@
                 ]
             };
 
-            // Als er al een actieve sessie loopt, voeg het toe aan de lopende conversatie
             if (mistralConversationId) {
                 url = `https://api.mistral.ai/v1/conversations/${mistralConversationId}`;
                 payload = {
@@ -317,12 +388,10 @@
 
             const data = await response.json();
 
-            // Bewaar de sessie-ID voor vervolgvragen
             if (data.id || data.conversation_id) {
                 mistralConversationId = data.id || data.conversation_id;
             }
 
-            // Haal de tekst van het antwoord op
             let replyText = "";
             if (data.outputs && Array.isArray(data.outputs)) {
                 const messageOutputs = data.outputs.filter(o => o.type === "message.output");
@@ -342,23 +411,33 @@
                 replyText = "Samir blijft even stil of heeft geen antwoord.";
             }
 
-            // Verwijder laadindicator en toon antwoord
             const loader = document.getElementById('chat-loading');
             if (loader) loader.remove();
 
-            const agentBubble = document.createElement('div');
-            agentBubble.className = 'chat-bubble agent';
-            agentBubble.innerHTML = `<strong>Samir:</strong> ${escapeHtml(replyText).replace(/\n/g, '<br>')}`;
-            chatWindow.appendChild(agentBubble);
+            // Toon antwoord van Samir met foto
+            const agentRow = document.createElement('div');
+            agentRow.className = 'chat-row agent';
+            agentRow.innerHTML = `
+                <img src="samir.jpeg" alt="Samir" class="chat-avatar-small" onerror="this.style.display='none'">
+                <div class="chat-bubble agent">
+                    <strong>Samir:</strong> ${escapeHtml(replyText).replace(/\n/g, '<br>')}
+                </div>
+            `;
+            chatWindow.appendChild(agentRow);
 
         } catch (err) {
             const loader = document.getElementById('chat-loading');
             if (loader) loader.remove();
 
-            const errorBubble = document.createElement('div');
-            errorBubble.className = 'chat-bubble error';
-            errorBubble.innerText = `Fout bij communicatie: ${err.message}. Controleer je API-key.`;
-            chatWindow.appendChild(errorBubble);
+            const errorRow = document.createElement('div');
+            errorRow.className = 'chat-row';
+            errorRow.style.alignSelf = 'center';
+            errorRow.innerHTML = `
+                <div class="chat-bubble error">
+                    Fout bij communicatie: ${err.message}. Controleer je API-key.
+                </div>
+            `;
+            chatWindow.appendChild(errorRow);
         } finally {
             sendBtn.disabled = false;
             chatWindow.scrollTop = chatWindow.scrollHeight;
@@ -370,8 +449,11 @@
             mistralConversationId = null;
             const chatWindow = document.getElementById('chat-window');
             chatWindow.innerHTML = `
-                <div class="chat-bubble agent">
-                    <strong>Samir:</strong> Hallo verbalisant, ik kom aangifte doen van wat me zojuist is overkomen...
+                <div class="chat-row agent">
+                    <img src="samir.jpeg" alt="Samir" class="chat-avatar-small" onerror="this.style.display='none'">
+                    <div class="chat-bubble agent">
+                        <strong>Samir:</strong> Hallo verbalisant, ik kom aangifte doen van wat me zojuist is overkomen...
+                    </div>
                 </div>
             `;
         }
